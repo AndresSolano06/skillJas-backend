@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SkillJas.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,8 +11,12 @@ builder.Services.AddDbContext<SkillJasDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); 
 builder.Configuration.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
 
-
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(80); 
+});
 var app = builder.Build();
+app.MapGet("/", () => "✅ SkillJas API is running!");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
