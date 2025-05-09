@@ -9,3 +9,4 @@ public interface ICourseService
     Task<int> CreateAsync(CreateCourseDto dto);
     Task<bool> PauseAsync(int id);
 }
+ 
