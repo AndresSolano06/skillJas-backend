@@ -1,27 +1,30 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SkillJas.Infrastructure.Data;
+using skillJas.Infrastructure.Data;
 using Microsoft.IdentityModel.Tokens;
 using skillJas.Application.Interfaces;
 using skillJas.Application.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<SkillJasDbContext>(options =>
+builder.Services.AddDbContext<skillJasDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Configuration.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        options.Authority = "https://<TU_SUBDOMINIO>.clerk.accounts.dev"; 
+        options.Authority = "https://actual-lizard-51.clerk.accounts.dev";
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateAudience = false,
             ValidateIssuer = true,
-            ValidIssuer = "https://<TU_SUBDOMINIO>.clerk.accounts.dev" 
+            ValidIssuer = "https://actual-lizard-51.clerk.accounts.dev",
+            ValidateAudience = false
         };
     });
+
+builder.Services.AddAuthorization();
 
 
 builder.Services.AddAuthorization();

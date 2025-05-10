@@ -4,9 +4,9 @@ namespace skillJas.Application.Interfaces;
 
 public interface ICourseService
 {
-    Task<List<CourseDto>> GetAllAsync();
-    Task<CourseDto?> GetByIdAsync(int id);
     Task<int> CreateAsync(CreateCourseDto dto);
+    Task<CourseDto?> GetByIdAsync(int id);
+    Task<List<CourseDto>> GetAllAsync();
     Task<bool> PauseAsync(int id);
 }
  

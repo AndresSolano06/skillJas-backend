@@ -1,14 +1,14 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using SkillJas.Infrastructure.Data;
+using skillJas.Infrastructure.Data;
 
-namespace SkillJas.Infrastructure;
+namespace skillJas.Infrastructure;
 
 public static class InfrastructureServiceRegistration
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, string connectionString)
     {
-        services.AddDbContext<SkillJasDbContext>(options =>
+        services.AddDbContext<skillJasDbContext>(options =>
             options.UseNpgsql(connectionString));
 
         return services;

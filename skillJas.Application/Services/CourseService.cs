@@ -1,18 +1,16 @@
-﻿using skillJas.Application.DTOS;
+﻿using skillJas.Application.DTOs;
 using skillJas.Application.Interfaces;
 using skillJas.Domain.Entities;
-using skillJas.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using skillJas.Application.DTOs;
 
 
 namespace skillJas.Application.Services
 {
     public class CourseService : ICourseService
     {
-        private readonly SkillJasDbContext _context;
+        private readonly ISkillJasDbContext _context;
 
-        public CourseService(SkillJasDbContext context)
+        public CourseService(ISkillJasDbContext context)
         {
             _context = context;
         }

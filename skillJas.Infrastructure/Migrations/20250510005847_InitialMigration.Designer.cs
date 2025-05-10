@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using SkillJas.Infrastructure.Data;
+using skillJas.Infrastructure.Data;
 
 #nullable disable
 
 namespace skillJas.Infrastructure.Migrations
 {
-    [DbContext(typeof(SkillJasDbContext))]
+    [DbContext(typeof(skillJasDbContext))]
     [Migration("20250510005847_InitialMigration")]
     partial class InitialMigration
     {
