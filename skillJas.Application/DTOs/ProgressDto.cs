@@ -1,4 +1,4 @@
-﻿namespace SkillJas.Application.DTOs;
+﻿namespace skillJas.Application.DTOs;
 
 public class ProgressDto
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using skillJas.Domain.Entities;
 
-namespace SkillJas.Infrastructure.Data;
+namespace skillJas.Infrastructure.Data;
 
 public class SkillJasDbContext : DbContext
 {
