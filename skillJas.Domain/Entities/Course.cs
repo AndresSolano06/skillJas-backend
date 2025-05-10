@@ -1,7 +1,7 @@
-﻿using SkillJas.Domain.Common;
+﻿using skillJas.Domain.Common;
 using System;
 
-namespace SkillJas.Domain.Entities;
+namespace skillJas.Domain.Entities;
 
 public class Course : AuditableEntity
 {

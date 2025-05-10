@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SkillJas.Domain.Entities;
+using skillJas.Domain.Entities;
 
 namespace SkillJas.Infrastructure.Data;
 
