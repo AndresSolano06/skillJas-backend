@@ -1,14 +1,14 @@
-﻿using SkillJas.Domain.Common;
+﻿using skillJas.Domain.Common;
 
-namespace SkillJas.Domain.Entities;
+namespace skillJas.Domain.Entities;
 
 public class Favorite : AuditableEntity
 {
     public int Id { get; set; }
-
-    public string UserId { get; set; } = default!;
     public int CourseId { get; set; }
+    public Guid UserId { get; set; }
+    public User User { get; set; } = null!;
 
-    public User User { get; set; } = default!;
-    public Course Course { get; set; } = default!;
+
+    public Course? Course { get; set; }
 }
