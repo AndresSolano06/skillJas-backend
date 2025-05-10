@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using skillJas.Domain.Entities;
 
-namespace SkillJas.Infrastructure.Data;
+namespace skillJas.Infrastructure.Data;
 
-public class SkillJasDbContext : DbContext
+public class skillJasDbContext : DbContext, ISkillJasDbContext
 {
-    public SkillJasDbContext(DbContextOptions<SkillJasDbContext> options) : base(options) { }
+    public skillJasDbContext(DbContextOptions<skillJasDbContext> options) : base(options) { }
 
     public DbSet<User> Users => Set<User>();
     public DbSet<Course> Courses => Set<Course>();

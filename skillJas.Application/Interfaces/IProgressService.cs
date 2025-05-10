@@ -1,6 +1,6 @@
-﻿using SkillJas.Application.DTOs;
+﻿using skillJas.Application.DTOs;
 
-namespace SkillJas.Application.Interfaces;
+namespace skillJas.Application.Interfaces;
 
 public interface IProgressService
 {
