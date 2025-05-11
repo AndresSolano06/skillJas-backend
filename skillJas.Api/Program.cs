@@ -1,54 +1,62 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using skillJas.Infrastructure.Data;
 using skillJas.Application.Interfaces;
 using skillJas.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔧 Configuración de servicios
-builder.Services.AddControllers(); // <--- Necesario para habilitar los controllers
+// 🔧 Servicios base
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// 🔐 Swagger + JWT + X-Role Header
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new() { Title = "SkillJas.API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "SkillJas.API", Version = "v1" });
 
-    // Configuración de seguridad para JWT
-    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    // JWT Bearer config
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Type = SecuritySchemeType.Http,
         Scheme = "bearer",
         BearerFormat = "JWT",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Ingresa tu token Clerk en formato: Bearer {token}"
+        In = ParameterLocation.Header,
+        Description = "Ingresa tu token Clerk: Bearer {token}"
     });
 
-    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            new OpenApiSecurityScheme
             {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                Reference = new OpenApiReference
                 {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
                 }
             },
-            new string[] {}
+            Array.Empty<string>()
         }
     });
+
+    // Rol Header
+    c.OperationFilter<AddRoleHeaderFilter>();
 });
+
+// 📦 DbContext y Servicios
 builder.Services.AddDbContext<skillJasDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-
 builder.Services.AddScoped<ISkillJasDbContext>(provider => provider.GetRequiredService<skillJasDbContext>());
 builder.Services.AddScoped<ICourseService, CourseService>();
 
-// Clerk
+// 🔐 Clerk JWT Config
 builder.Configuration.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -64,12 +72,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+// 🌐 Networking
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.ListenAnyIP(80);
 });
 
-// 🧱 Build app
+// 🚀 App Pipeline
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -81,8 +90,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers(); // <--- Importante para exponer los endpoints
-
+app.MapControllers();
 app.MapGet("/", () => "✅ SkillJas API is running!");
 
 app.Run();
+
+

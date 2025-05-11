@@ -7,7 +7,7 @@ namespace skillJas.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize] // Verifica JWT de Clerk
 public class CoursesController : ControllerBase
 {
     private readonly ICourseService _courseService;
@@ -18,10 +18,17 @@ public class CoursesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateCourse([FromBody] CreateCourseDto dto)
+    public async Task<IActionResult> CreateCourse(
+        [FromBody] CreateCourseDto dto,
+        [FromHeader(Name = "X-Role")] string role)
     {
-        var result = await _courseService.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetCourseById), new { id = result }, result);
+        if (string.IsNullOrEmpty(role) || role.ToLower() != "admin")
+        {
+            return Forbid("Access denied: only admins can create courses.");
+        }
+
+        var courseId = await _courseService.CreateAsync(dto);
+        return CreatedAtAction(nameof(GetCourseById), new { id = courseId }, courseId);
     }
 
     [HttpGet("{id}")]

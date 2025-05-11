@@ -40,5 +40,13 @@ public class skillJasDbContext : DbContext, ISkillJasDbContext
             .HasOne(p => p.Course)
             .WithMany(c => c.Progress)
             .HasForeignKey(p => p.CourseId);
+
+        modelBuilder.Entity<Course>()
+        .Property(c => c.Category)
+        .HasConversion(
+            v => string.Join(";", v),
+            v => v.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList()
+        );
+
     }
 }
