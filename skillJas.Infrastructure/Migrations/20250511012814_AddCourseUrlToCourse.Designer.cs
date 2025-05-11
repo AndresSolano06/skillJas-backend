@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using skillJas.Infrastructure.Data;
@@ -11,9 +12,11 @@ using skillJas.Infrastructure.Data;
 namespace skillJas.Infrastructure.Migrations
 {
     [DbContext(typeof(skillJasDbContext))]
-    partial class SkillJasDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250511012814_AddCourseUrlToCourse")]
+    partial class AddCourseUrlToCourse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

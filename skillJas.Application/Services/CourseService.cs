@@ -23,7 +23,8 @@ namespace skillJas.Application.Services
                 Description = dto.Description,
                 Category = dto.Category,
                 IsActive = true,
-                CreatedDate = DateTime.UtcNow
+                CreatedDate = DateTime.UtcNow,
+                CourseUrl = dto.CourseUrl
             };
 
             _context.Courses.Add(course);
@@ -46,7 +47,8 @@ namespace skillJas.Application.Services
                     Category = course.Category,
                     CreatedDate = course.CreatedDate,
                     UpdatedDate = course.UpdatedDate,
-                    IsActive = course.IsActive
+                    IsActive = course.IsActive,
+                    CourseUrl = course.CourseUrl,
                 };
         }
 
@@ -61,7 +63,8 @@ namespace skillJas.Application.Services
                     Category = c.Category,
                     CreatedDate = c.CreatedDate,
                     UpdatedDate = c.UpdatedDate,
-                    IsActive = c.IsActive
+                    IsActive = c.IsActive,
+                    CourseUrl = c.CourseUrl
                 })
                 .ToListAsync();
         }
