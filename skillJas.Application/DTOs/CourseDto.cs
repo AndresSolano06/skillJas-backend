@@ -8,5 +8,7 @@ public class CourseDto
     public List<string> Category { get; set; } = new(); 
     public DateTime CreatedDate { get; set; }
     public DateTime? UpdatedDate { get; set; }
+    public string? CourseUrl { get; set; }
+
     public bool IsActive { get; set; }
 }
