@@ -39,4 +39,13 @@ public class CoursesController : ControllerBase
         return result is null ? NotFound() : Ok(result);
     }
 
+    [AllowAnonymous]
+    [HttpGet]
+    public async Task<IActionResult> GetActiveCourses([FromQuery] PaginationQuery query)
+    {
+        var result = await _courseService.GetActiveCoursesAsync(query.Page, query.PageSize);
+        return Ok(result);
+    }
+
+
 }

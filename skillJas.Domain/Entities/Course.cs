@@ -1,5 +1,4 @@
 ﻿using skillJas.Domain.Common;
-using System;
 
 namespace skillJas.Domain.Entities;
 
