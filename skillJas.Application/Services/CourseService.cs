@@ -55,24 +55,23 @@ namespace skillJas.Application.Services
 
         public async Task<PaginatedResult<CourseDto>> GetActiveCoursesAsync(int page, int pageSize, string? category)
         {
-            // Filtrar cursos activos
             var query = _context.Courses.Where(c => c.IsActive);
 
-            // Filtrar por categoría (si aplica)
             if (!string.IsNullOrWhiteSpace(category))
             {
                 var normalizedCategory = category.ToLower();
-                query = query.Where(c => c.Category.Any(cat => cat.ToLower() == normalizedCategory));
+                query = query
+                    .AsEnumerable()
+                    .Where(c => c.Category.Any(cat => cat.ToLower() == normalizedCategory))
+                    .AsQueryable();
             }
 
-            // Orden por fecha más reciente
             query = query.OrderByDescending(c => c.CreatedDate);
 
-            // Paginación
-            var totalItems = await query.CountAsync();
+            var totalItems = query.Count();
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
-            var items = await query
+            var items = query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(c => new CourseDto
@@ -86,7 +85,7 @@ namespace skillJas.Application.Services
                     IsActive = c.IsActive,
                     CourseUrl = c.CourseUrl
                 })
-                .ToListAsync();
+                .ToList();
 
             return new PaginatedResult<CourseDto>
             {
@@ -97,6 +96,7 @@ namespace skillJas.Application.Services
                 PageSize = pageSize
             };
         }
+
 
         public async Task<bool> PauseAsync(int id)
         {
