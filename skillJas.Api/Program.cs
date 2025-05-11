@@ -2,7 +2,6 @@
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using skillJas.Infrastructure.Data;
 using skillJas.Application.Interfaces;
 using skillJas.Application.Services;
@@ -45,7 +44,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 
     // Rol Header
-    c.OperationFilter<AddRoleHeaderFilter>();
+    c.OperationFilter<AddRequiredHeadersParameter>();
 });
 
 // 📦 DbContext y Servicios
