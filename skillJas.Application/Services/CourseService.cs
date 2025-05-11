@@ -2,6 +2,7 @@
 using skillJas.Application.Interfaces;
 using skillJas.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 
 namespace skillJas.Application.Services
@@ -52,12 +53,22 @@ namespace skillJas.Application.Services
                 };
         }
 
-        public async Task<PaginatedResult<CourseDto>> GetActiveCoursesAsync(int page, int pageSize)
+        public async Task<PaginatedResult<CourseDto>> GetActiveCoursesAsync(int page, int pageSize, string? category)
         {
-            var query = _context.Courses
-                .Where(c => c.IsActive)
-                .OrderByDescending(c => c.CreatedDate);
+            // Filtrar cursos activos
+            var query = _context.Courses.Where(c => c.IsActive);
 
+            // Filtrar por categoría (si aplica)
+            if (!string.IsNullOrWhiteSpace(category))
+            {
+                var normalizedCategory = category.ToLower();
+                query = query.Where(c => c.Category.Any(cat => cat.ToLower() == normalizedCategory));
+            }
+
+            // Orden por fecha más reciente
+            query = query.OrderByDescending(c => c.CreatedDate);
+
+            // Paginación
             var totalItems = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
@@ -86,7 +97,6 @@ namespace skillJas.Application.Services
                 PageSize = pageSize
             };
         }
-
 
         public async Task<bool> PauseAsync(int id)
         {
