@@ -52,9 +52,18 @@ namespace skillJas.Application.Services
                 };
         }
 
-        public async Task<List<CourseDto>> GetAllAsync()
+        public async Task<PaginatedResult<CourseDto>> GetActiveCoursesAsync(int page, int pageSize)
         {
-            return await _context.Courses
+            var query = _context.Courses
+                .Where(c => c.IsActive)
+                .OrderByDescending(c => c.CreatedDate);
+
+            var totalItems = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(c => new CourseDto
                 {
                     Id = c.Id,
@@ -67,7 +76,17 @@ namespace skillJas.Application.Services
                     CourseUrl = c.CourseUrl
                 })
                 .ToListAsync();
+
+            return new PaginatedResult<CourseDto>
+            {
+                Items = items,
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                Page = page,
+                PageSize = pageSize
+            };
         }
+
 
         public async Task<bool> PauseAsync(int id)
         {
@@ -82,5 +101,7 @@ namespace skillJas.Application.Services
 
             return true;
         }
+
+
     }
 }
