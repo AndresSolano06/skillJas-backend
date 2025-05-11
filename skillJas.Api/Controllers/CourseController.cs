@@ -31,10 +31,12 @@ public class CoursesController : ControllerBase
         return CreatedAtAction(nameof(GetCourseById), new { id = courseId }, courseId);
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetCourseById(int id)
     {
         var result = await _courseService.GetByIdAsync(id);
         return result is null ? NotFound() : Ok(result);
     }
+
 }
