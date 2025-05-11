@@ -98,7 +98,7 @@ namespace skillJas.Application.Services
         }
 
 
-        public async Task<bool> PauseAsync(int id)
+        public async Task<bool> DisableAsync(int id)
         {
             var course = await _context.Courses.FindAsync(id);
             if (course == null) return false;
@@ -108,7 +108,19 @@ namespace skillJas.Application.Services
 
             _context.Courses.Update(course);
             await _context.SaveChangesAsync();
+            return true;
+        }
 
+        public async Task<bool> EnableAsync(int id)
+        {
+            var course = await _context.Courses.FindAsync(id);
+            if (course == null) return false;
+
+            course.IsActive = true;
+            course.UpdatedDate = DateTime.UtcNow;
+
+            _context.Courses.Update(course);
+            await _context.SaveChangesAsync();
             return true;
         }
 

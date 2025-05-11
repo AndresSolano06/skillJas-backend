@@ -46,4 +46,34 @@ public class CoursesController : ControllerBase
         var result = await _courseService.GetActiveCoursesAsync(query.Page, query.PageSize, query.Category);
         return Ok(result);
     }
+
+    [HttpPatch("{id}/disable")]
+    public async Task<IActionResult> DisableCourse(
+    int id,
+    [FromHeader(Name = "X-Role")] string role)
+    {
+        if (string.IsNullOrEmpty(role) || role.ToLower() != "admin")
+        {
+            return Forbid("Access denied: only admins can disable courses.");
+        }
+
+        var result = await _courseService.DisableAsync(id);
+        return result ? NoContent() : NotFound();
+    }
+
+    [HttpPatch("{id}/enable")]
+    public async Task<IActionResult> EnableCourse(
+    int id,
+    [FromHeader(Name = "X-Role")] string role)
+    {
+        if (string.IsNullOrEmpty(role) || role.ToLower() != "admin")
+        {
+            return Forbid("Access denied: only admins can enable courses.");
+        }
+
+        var result = await _courseService.EnableAsync(id);
+        return result ? NoContent() : NotFound();
+    }
+
+
 }
