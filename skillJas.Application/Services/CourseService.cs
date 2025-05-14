@@ -53,9 +53,9 @@ namespace skillJas.Application.Services
                 };
         }
 
-        public async Task<PaginatedResult<CourseDto>> GetActiveCoursesAsync(int page, int pageSize, string? category)
+        public async Task<PaginatedResult<CourseDto>> GetCoursesAsync(int page, int pageSize, string? category)
         {
-            var query = _context.Courses.Where(c => c.IsActive);
+            var query = _context.Courses.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(category))
             {

@@ -6,7 +6,7 @@ public interface ICourseService
 {
     Task<int> CreateAsync(CreateCourseDto dto);
     Task<CourseDto?> GetByIdAsync(int id);
-    Task<PaginatedResult<CourseDto>> GetActiveCoursesAsync(int page, int pageSize, string? category);
+    Task<PaginatedResult<CourseDto>> GetCoursesAsync(int page, int pageSize, string? category);
     Task<bool> DisableAsync(int id);
     Task<bool> EnableAsync(int id);
 
