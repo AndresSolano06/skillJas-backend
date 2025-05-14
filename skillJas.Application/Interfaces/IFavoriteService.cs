@@ -1,10 +1,10 @@
 ﻿using skillJas.Application.DTOs;
 
-namespace skillJas.Application.Interfaces;
-
 public interface IFavoriteService
 {
-    Task<List<FavoriteDto>> GetFavoritesByUserAsync(string userId);
-    Task<int> AddToFavoritesAsync(string userId, AddFavoriteDto dto);
-    Task<bool> RemoveFavoriteAsync(int favoriteId, string userId);
+    Task<int> AddFavoriteAsync(string userId, int courseId);
+    Task<bool> RemoveFavoriteAsync(string userId, int favoriteId);
+    Task<IEnumerable<CourseDto>> GetFavoritesAsync(string userId);
+
+
 }

@@ -43,7 +43,7 @@ public class CoursesController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetActiveCourses([FromQuery] PaginationQuery query)
     {
-        var result = await _courseService.GetActiveCoursesAsync(query.Page, query.PageSize, query.Category);
+        var result = await _courseService.GetCoursesAsync(query.Page, query.PageSize, query.Category);
         return Ok(result);
     }
 
