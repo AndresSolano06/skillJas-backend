@@ -45,7 +45,7 @@ builder.Services.AddSwaggerGen(c =>
     c.OperationFilter<AddRequiredHeadersParameter>();
 });
 
-// CORS abierto
+// CORS FULL LIBRE
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
