@@ -24,30 +24,53 @@ namespace skillJas.Api.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized("Invalid user token.");
 
-            var favoriteId = await _favoriteService.AddFavoriteAsync(userId, dto.CourseId);
-            return CreatedAtAction(nameof(AddFavorite), new { id = favoriteId }, favoriteId);
+            try
+            {
+                var favoriteId = await _favoriteService.AddFavoriteAsync(userId, dto.CourseId);
+                return CreatedAtAction(nameof(AddFavorite), new { id = favoriteId }, favoriteId);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> RemoveFavorite(int id)
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized("Invalid user token.");
+            try
+            {
 
-            var success = await _favoriteService.RemoveFavoriteAsync(userId, id);
-            return success ? NoContent() : NotFound();
+                var success = await _favoriteService.RemoveFavoriteAsync(userId, id);
+                return Ok(success);
+            }
+            catch (Exception ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> GetFavorites()
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized("Invalid user token.");
+            try
+            {
+                var favorites = await _favoriteService.GetFavoritesAsync(userId);
+                return Ok(favorites);
+            }
+            catch (Exception)
+            {
 
-            var favorites = await _favoriteService.GetFavoritesAsync(userId);
-            return Ok(favorites);
+                return NoContent();
+            }
+
+
         }
     }
 }
