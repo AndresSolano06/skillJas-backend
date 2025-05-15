@@ -50,7 +50,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
 
@@ -79,7 +81,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = false // Solo para debug local
         };
 
-        // ✅ Mapear sub -> NameIdentifier si no viene correcto
+        // Mapear sub -> NameIdentifier si no viene
         options.Events = new JwtBearerEvents
         {
             OnTokenValidated = context =>
@@ -126,14 +128,16 @@ app.Use(async (context, next) =>
     await next();
 });
 
-// Pipeline
+// Pipeline de middlewares
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// ✅ CORS DEBE IR ANTES de Auth
 app.UseCors("AllowAll");
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
