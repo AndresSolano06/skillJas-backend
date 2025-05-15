@@ -8,16 +8,15 @@ using skillJas.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔧 Servicios base
+// Servicios base
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// 🔐 Swagger + JWT + X-Role Header
+// Swagger + JWT + Headers
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "SkillJas.API", Version = "v1" });
 
-    // JWT Bearer config
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -43,23 +42,19 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 
-    // Rol Header
     c.OperationFilter<AddRequiredHeadersParameter>();
 });
 
-// Habilitar CORS abierto
+// CORS abierto
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
 });
 
-// 📦 DbContext y Servicios
+// DbContext y Servicios
 builder.Services.AddDbContext<skillJasDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -68,8 +63,9 @@ builder.Services.AddScoped<ISkillJasDbContext>(provider => provider.GetRequiredS
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IFavoriteService, FavoriteService>();
 
-// 🔐 Clerk JWT Config
+// Clerk JWT Config
 builder.Configuration.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -79,34 +75,70 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = true,
             ValidIssuer = "https://actual-lizard-51.clerk.accounts.dev",
             ValidateAudience = false,
-            NameClaimType = "sub"  
+            NameClaimType = "sub",
+            ValidateLifetime = false // Solo para debug local
+        };
+
+        // ✅ Mapear sub -> NameIdentifier si no viene correcto
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = context =>
+            {
+                var identity = (System.Security.Claims.ClaimsIdentity)context.Principal.Identity;
+
+                var subClaim = identity.FindFirst("sub");
+                if (subClaim != null && !identity.HasClaim(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier))
+                {
+                    identity.AddClaim(new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, subClaim.Value));
+                }
+
+                return Task.CompletedTask;
+            }
         };
     });
 
-
 builder.Services.AddAuthorization();
 
-// 🌐 Networking
+// Networking
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.ListenAnyIP(80);
 });
 
-// 🚀 App Pipeline
 var app = builder.Build();
 
+// Debug de Claims (temporal)
+app.Use(async (context, next) =>
+{
+    if (context.User.Identity?.IsAuthenticated == true)
+    {
+        Console.WriteLine("✅ Claims del usuario:");
+        foreach (var claim in context.User.Claims)
+        {
+            Console.WriteLine($"- {claim.Type}: {claim.Value}");
+        }
+    }
+    else
+    {
+        Console.WriteLine("❌ Usuario no autenticado.");
+    }
+
+    await next();
+});
+
+// Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 app.MapGet("/", () => "✅ SkillJas API is running!");
 
 app.Run();
-
-
