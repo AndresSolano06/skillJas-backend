@@ -20,7 +20,7 @@ namespace skillJas.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> AddFavorite([FromBody] AddFavoriteDto dto)
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized("Invalid user token.");
 
@@ -49,6 +49,5 @@ namespace skillJas.Api.Controllers
             var favorites = await _favoriteService.GetFavoritesAsync(userId);
             return Ok(favorites);
         }
-
     }
 }

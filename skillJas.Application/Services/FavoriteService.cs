@@ -1,67 +1,91 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using skillJas.Application.DTOs;
+using skillJas.Application.Interfaces;
+using skillJas.Domain.Entities;
 
-public class FavoriteService : IFavoriteService
+namespace skillJas.Application.Services
 {
-    private readonly ISkillJasDbContext _context;
-
-    public FavoriteService(ISkillJasDbContext context)
+    public class FavoriteService : IFavoriteService
     {
-        _context = context;
-    }
+        private readonly ISkillJasDbContext _context;
 
-    public async Task<int> AddFavoriteAsync(string userId, int courseId)
-    {
-        var courseExists = await _context.Courses.AnyAsync(c => c.Id == courseId);
-        if (!courseExists)
-            throw new ArgumentException($"Course with ID {courseId} does not exist.");
-
-        var favoriteExists = await _context.Favorites.AnyAsync(f => f.UserId == userId && f.CourseId == courseId);
-        if (favoriteExists)
-            throw new InvalidOperationException("Favorite already exists.");
-
-        var favorite = new Favorite
+        public FavoriteService(ISkillJasDbContext context)
         {
-            UserId = userId,
-            CourseId = courseId
-        };
+            _context = context;
+        }
 
-        _context.Favorites.Add(favorite);
-        await _context.SaveChangesAsync();
+        public async Task<int> AddFavoriteAsync(string userId, int courseId)
+        {
+            // Validar si el usuario existe
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
-        return favorite.Id;
-    }
+            if (user == null)
+            {
+                // Crear el usuario si no existe
+                user = new User
+                {
+                    Id = userId,
+                    IsActive = true,
+                    CreatedDate = DateTime.UtcNow,
+                    UpdatedDate = DateTime.UtcNow
+                };
 
-    public async Task<bool> RemoveFavoriteAsync(string userId, int favoriteId)
-    {
-        var favorite = await _context.Favorites
-            .FirstOrDefaultAsync(f => f.Id == favoriteId && f.UserId == userId);
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+            }
 
-        if (favorite == null) return false;
+            // Validar si ya existe ese favorito (opcional para evitar duplicados)
+            var exists = await _context.Favorites
+                .AnyAsync(f => f.UserId == userId && f.CourseId == courseId);
 
-        _context.Favorites.Remove(favorite);
-        await _context.SaveChangesAsync();
+            if (exists)
+                throw new InvalidOperationException("Favorite already exists.");
 
-        return true;
-    }
+            // Crear el favorito
+            var favorite = new Favorite
+            {
+                UserId = userId,
+                CourseId = courseId,
+                CreatedDate = DateTime.UtcNow
+            };
 
-    public async Task<IEnumerable<CourseDto>> GetFavoritesAsync(string userId)
-    {
-        var favorites = await _context.Favorites
-            .Include(f => f.Course)
-            .Where(f => f.UserId == userId)
-            .Select(f => new CourseDto
+            _context.Favorites.Add(favorite);
+            await _context.SaveChangesAsync();
+
+            return favorite.Id;
+        }
+
+        public async Task<bool> RemoveFavoriteAsync(string userId, int favoriteId)
+        {
+            var favorite = await _context.Favorites
+                .FirstOrDefaultAsync(f => f.Id == favoriteId && f.UserId == userId);
+
+            if (favorite == null)
+                return false;
+
+            _context.Favorites.Remove(favorite);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<IEnumerable<CourseDto>> GetFavoritesAsync(string userId)
+        {
+            var favorites = await _context.Favorites
+                .Include(f => f.Course) // Incluye navegación a Course si existe la relación
+                .Where(f => f.UserId == userId)
+                .ToListAsync();
+
+            var result = favorites.Select(f => new CourseDto
             {
                 Id = f.Course.Id,
                 Title = f.Course.Title,
                 Description = f.Course.Description,
-                Category = f.Course.Category,
-                CourseUrl = f.Course.CourseUrl
-            })
-            .ToListAsync();
+                CreatedDate = f.Course.CreatedDate
+            });
 
-        return favorites;
+            return result;
+        }
+
     }
-
-
 }
