@@ -78,9 +78,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             ValidateIssuer = true,
             ValidIssuer = "https://actual-lizard-51.clerk.accounts.dev",
-            ValidateAudience = false
+            ValidateAudience = false,
+            NameClaimType = "sub"  
         };
     });
+
 
 builder.Services.AddAuthorization();
 
