@@ -11,5 +11,4 @@ public class Course : AuditableEntity
     public string? CourseUrl { get; set; }
 
     public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
-    public ICollection<Progress> Progress { get; set; } = new List<Progress>();
 }
