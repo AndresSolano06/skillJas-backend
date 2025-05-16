@@ -79,8 +79,9 @@ public class CoursesController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> GetNormalizedCategories()
     {
-        var categories = await _courseService.GetNormalizedCategoriesAsync();
-        return Ok(categories);
+        var result = await _courseService.GetNormalizedCategoriesAsync();
+        return Ok(result);
     }
+
 
 }

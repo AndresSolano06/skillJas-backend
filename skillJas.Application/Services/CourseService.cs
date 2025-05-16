@@ -128,16 +128,17 @@ namespace skillJas.Application.Services
         public async Task<Dictionary<string, int>> GetNormalizedCategoriesAsync()
         {
             var rawCategories = await _context.Courses
-                .Select(c => c.Category)
+                .SelectMany(c => c.Category) 
                 .Where(c => !string.IsNullOrWhiteSpace(c))
                 .ToListAsync();
 
-            return rawCategories
-                .Select(c => CategoryNormalizer.Normalize(c))
+            var normalized = rawCategories
+                .Select(CategoryNormalizer.Normalize)
                 .GroupBy(n => n)
                 .ToDictionary(g => g.Key, g => g.Count());
-        }
 
+            return normalized;
+        }
 
 
     }
