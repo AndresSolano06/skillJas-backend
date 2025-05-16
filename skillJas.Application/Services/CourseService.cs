@@ -3,6 +3,7 @@ using skillJas.Application.Interfaces;
 using skillJas.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using skillJas.Domain.Common;
 
 
 namespace skillJas.Application.Services
@@ -123,6 +124,20 @@ namespace skillJas.Application.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<Dictionary<string, int>> GetNormalizedCategoriesAsync()
+        {
+            var rawCategories = await _context.Courses
+                .Select(c => c.Category)
+                .Where(c => !string.IsNullOrWhiteSpace(c))
+                .ToListAsync();
+
+            return rawCategories
+                .Select(c => CategoryNormalizer.Normalize(c))
+                .GroupBy(n => n)
+                .ToDictionary(g => g.Key, g => g.Count());
+        }
+
 
 
     }

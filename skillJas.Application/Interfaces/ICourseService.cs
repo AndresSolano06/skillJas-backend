@@ -9,6 +9,7 @@ public interface ICourseService
     Task<PaginatedResult<CourseDto>> GetCoursesAsync(int page, int pageSize, string? category);
     Task<bool> DisableAsync(int id);
     Task<bool> EnableAsync(int id);
+    Task<Dictionary<string, int>> GetNormalizedCategoriesAsync();
 
 
 }
