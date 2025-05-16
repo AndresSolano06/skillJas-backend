@@ -79,9 +79,12 @@ namespace skillJas.Application.Services
             var result = favorites.Select(f => new CourseDto
             {
                 Id = f.Course.Id,
-                Title = f.Course.Title,
                 Description = f.Course.Description,
-                CreatedDate = f.Course.CreatedDate
+                Category = f.Course.Category,
+                CreatedDate = f.Course.CreatedDate,
+                UpdatedDate = f.Course.UpdatedDate,
+                IsActive = f.Course.IsActive,
+                CourseUrl = f.Course.CourseUrl
             });
 
             return result;
