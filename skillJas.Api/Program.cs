@@ -64,6 +64,8 @@ builder.Services.AddDbContext<skillJasDbContext>(options =>
 builder.Services.AddScoped<ISkillJasDbContext>(provider => provider.GetRequiredService<skillJasDbContext>());
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IFavoriteService, FavoriteService>();
+builder.Services.AddScoped<IDocumentationService, DocumentationService>();
+
 
 // Clerk JWT Config
 builder.Configuration.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
