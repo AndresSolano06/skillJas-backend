@@ -75,5 +75,12 @@ public class CoursesController : ControllerBase
         return result ? NoContent() : NotFound();
     }
 
+    [HttpGet("categories")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetNormalizedCategories()
+    {
+        var categories = await _courseService.GetNormalizedCategoriesAsync();
+        return Ok(categories);
+    }
 
 }
