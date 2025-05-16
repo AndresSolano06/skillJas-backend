@@ -2,60 +2,65 @@
 
 public static class CategoryNormalizer
 {
-    public static readonly Dictionary<string, string> Map = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly Dictionary<string, string> _map = new(StringComparer.OrdinalIgnoreCase)
     {
         // Lenguajes
-        { "js", "JavaScript" }, { "javascript", "JavaScript" }, { "java script", "JavaScript" },
-        { "ts", "TypeScript" }, { "typescript", "TypeScript" },
-        { "py", "Python" }, { "python3", "Python" },
-        { "c#", "C#" }, { "csharp", "C#" },
-        { "c++", "C++" }, { "cpp", "C++" },
-        { "java", "Java" },
-        { "go", "Go" }, { "golang", "Go" },
-        { "rust", "Rust" },
-        { "php", "PHP" },
-        { "sql", "SQL" },
-        { "kotlin", "Kotlin" },
-        { "swift", "Swift" },
-        { "bash", "Bash" },
-        { "r", "R" },
-        { "dart", "Dart" },
+        ["js"] = "JavaScript",
+        ["javascript"] = "JavaScript",
+        ["java_script"] = "JavaScript",
+        ["ts"] = "TypeScript",
+        ["typescript"] = "TypeScript",
+        ["py"] = "Python",
+        ["python3"] = "Python",
+        ["csharp"] = "C#",
+        ["c#"] = "C#",
+        ["cs"] = "C#",
+        ["node"] = "Node.js",
+        ["nodejs"] = "Node.js",
+        ["html"] = "HTML",
+        ["html5"] = "HTML",
+        ["css"] = "CSS",
+        ["css3"] = "CSS",
+        ["sql"] = "SQL",
+        ["pgsql"] = "PostgreSQL",
+        ["postgres"] = "PostgreSQL",
 
         // Frameworks
-        { "react", "React" },
-        { "vue", "Vue" },
-        { "angular", "Angular" },
-        { "nextjs", "Next.js" }, { "next.js", "Next.js" },
-        { "nestjs", "NestJS" },
-        { "spring", "Spring" },
-        { "django", "Django" },
-        { "flask", "Flask" },
-        { "laravel", "Laravel" },
-        { "express", "Express" },
+        ["react"] = "React",
+        ["angular"] = "Angular",
+        ["vue"] = "Vue",
+        ["dotnet"] = ".NET",
+        [".net"] = ".NET",
+        ["asp.net"] = "ASP.NET",
+        ["bpmn"] = "BPMN",
 
-        // IDE / Herramientas
-        { "vs code", "VS Code" },
-        { "visual studio", "Visual Studio" },
-        { "intellij", "IntelliJ" },
-        { "pycharm", "PyCharm" },
-        { "webstorm", "WebStorm" },
+        // Herramientas / IDEs
+        ["vscode"] = "VS Code",
+        ["visualstudio"] = "Visual Studio",
+        ["jira"] = "Jira",
+        ["git"] = "Git",
+        ["github"] = "GitHub",
+        ["figma"] = "Figma",
 
-        // Roles / Cargos
-        { "frontend", "Frontend" },
-        { "backend", "Backend" },
-        { "fullstack", "Fullstack" },
-        { "devops", "DevOps" },
-        { "qa", "QA" },
-        { "scrum master", "Scrum Master" },
-        { "tech lead", "Tech Lead" }
+        // Roles
+        ["frontend"] = "Frontend",
+        ["front"] = "Frontend",
+        ["back"] = "Backend",
+        ["backend"] = "Backend",
+        ["fullstack"] = "Fullstack",
+        ["qa"] = "QA",
+        ["dev"] = "Developer",
+        ["developer"] = "Developer"
     };
 
     public static string Normalize(string input)
     {
-        if (string.IsNullOrWhiteSpace(input)) return string.Empty;
-        var key = input.Trim().ToLower();
-        return Map.TryGetValue(key, out var result)
-            ? result
+        if (string.IsNullOrWhiteSpace(input))
+            return "Otro";
+
+        var key = input.Trim().ToLowerInvariant();
+        return _map.TryGetValue(key, out var normalized)
+            ? normalized
             : char.ToUpper(key[0]) + key[1..];
     }
 }
