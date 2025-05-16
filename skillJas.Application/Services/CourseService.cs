@@ -127,10 +127,11 @@ namespace skillJas.Application.Services
 
         public async Task<Dictionary<string, int>> GetNormalizedCategoriesAsync()
         {
-            var rawCategories = await _context.Courses
-                .SelectMany(c => c.Category) 
+            var rawCategories = _context.Courses
+                .AsEnumerable()
+                .SelectMany(c => c.Category)
                 .Where(c => !string.IsNullOrWhiteSpace(c))
-                .ToListAsync();
+                .ToList();
 
             var normalized = rawCategories
                 .Select(CategoryNormalizer.Normalize)
@@ -138,6 +139,7 @@ namespace skillJas.Application.Services
                 .ToDictionary(g => g.Key, g => g.Count());
 
             return normalized;
+
         }
 
 
