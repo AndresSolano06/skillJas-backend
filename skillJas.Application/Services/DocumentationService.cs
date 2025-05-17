@@ -43,4 +43,22 @@ public class DocumentationService : IDocumentationService
                 CreatedDate = d.CreatedDate
             }).ToListAsync();
     }
+
+    public async Task<bool> UpdateAsync(int id, UpdateDocumentationDto dto)
+    {
+        var doc = await _context.Documentation.FindAsync(id);
+        if (doc is null)
+            return false;
+
+        doc.Title = dto.Title;
+        doc.Description = dto.Description;
+        doc.Url = dto.Url;
+        doc.IsActive = dto.IsActive;
+        doc.UpdatedDate = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+
 }

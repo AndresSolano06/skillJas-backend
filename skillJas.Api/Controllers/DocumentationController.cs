@@ -37,4 +37,18 @@ public class DocumentationController : ControllerBase
         var docs = await _documentationService.GetAllAsync();
         return Ok(docs);
     }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateDocumentationDto dto,
+        [FromHeader(Name = "X-Role")]
+    string role)
+    {
+        if (string.IsNullOrEmpty(role) || role.ToLower() != "admin")
+        {
+            return Forbid("Access denied: only admins can update documentations.");
+        }
+        var updated = await _documentationService.UpdateAsync(id, dto);
+        return updated ? NoContent() : NotFound();
+    }
+
 }
