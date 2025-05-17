@@ -7,6 +7,8 @@ namespace skillJas.Application.Interfaces
     {
         Task<int> CreateAsync(CreateDocumentationDto dto);
         Task<List<DocumentationDto>> GetAllAsync();
+        Task<bool> UpdateAsync(int id, UpdateDocumentationDto dto);
+
     }
 
 }
