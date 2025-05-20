@@ -1,4 +1,4 @@
-﻿namespace SkillJas.Application.Interfaces;
+﻿namespace skillJas.Application.Interfaces;
 
 public interface IAnalyticsService
 {

@@ -1,4 +1,4 @@
-﻿namespace SkillJas.Domain.Common;
+﻿namespace skillJas.Domain.Common;
 
 public abstract class AuditableEntity
 {

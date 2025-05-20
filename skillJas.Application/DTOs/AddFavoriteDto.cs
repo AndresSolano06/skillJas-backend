@@ -1,6 +1,7 @@
-﻿namespace SkillJas.Application.DTOs;
-
-public class AddFavoriteDto
+﻿namespace skillJas.Application.DTOs
 {
-    public int CourseId { get; set; }
+    public class AddFavoriteDto
+    {
+        public int CourseId { get; set; }
+    }
 }
